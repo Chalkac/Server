@@ -1,0 +1,7 @@
+name: Chalkac deploy
+
+on:
+  push:
+    branches:
+      - main
+
