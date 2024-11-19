@@ -18,14 +18,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Create resource
+        run: mkdir -p ./src/main/resources
+
       - name: Create application.properties
         run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
 
-      - name: Gradlew chmod
+      - name: add permission to gradlew
         run: chmod +x ./gradlew
-
-      - name: Build with Gradle
-        run: ./gradlew clean build -x test
 
       - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -38,11 +38,32 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Docker image build
-        run: docker build -t chalkac .
+      - name: build docker file and setting deploy files
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: chalkac
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          mkdir scripts
+          touch scripts/deploy.sh
+          echo "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin $ECR_REGISTRY" >> scripts/deploy.sh
+          echo "docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> scripts/deploy.sh
+          echo "docker run -p 8080:8080 -e PROFILE=dev -d --restart always --name chalkac $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> scripts/deploy.sh
 
-      - name: Docker tag
-        run: docker tag chalkac ${{ steps.login-ecr.outputs.registry }}/chalkac:latest
+      - name: upload to s3
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          zip -r deploy-$IMAGE_TAG.zip ./scripts appspec.yml
+          aws s3 cp --region ap-northeast-2 --acl private ./deploy-$IMAGE_TAG.zip s3://chalkac-bucket
 
-      - name: Docker push
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/chalkac:latest
+      - name: start deploy
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          aws deploy create-deployment --application-name Chalkac-codedeploy \
+          --deployment-config-name CodeDeployDefault.OneAtATime \
+          --deployment-group-name deploy-group \
+          --s3-location bucket=chalkac-bucket,bundleType=zip,key=deploy-$IMAGE_TAG.zip
