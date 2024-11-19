@@ -46,14 +46,3 @@ jobs:
 
       - name: Docker push
         run: docker push ${{ steps.login-ecr.outputs.registry }}/chalkac:latest
-
-      - name: Deploy to Elastic Beanstalk
-        run: |
-          aws elasticbeanstalk create-application-version \
-            --application-name "Chalkac" \
-            --version-label "v-${{ github.run_id }}" \
-            --source-bundle S3Bucket=${{ secrets.EB_BUCKET_NAME }},S3Key=${{ steps.login-ecr.outputs.registry }}/chalkac:latest
-
-          aws elasticbeanstalk update-environment \
-            --environment-name "Chalkac-env" \
-            --version-label "v-${{ github.run_id }}"
