@@ -56,8 +56,10 @@ jobs:
         env:
           IMAGE_TAG: ${{ github.sha }}
         run: |
+          echo $IMAGE_TAG > latest_tag.txt
           zip -r deploy-$IMAGE_TAG.zip ./scripts appspec.yml
           aws s3 cp --region ap-northeast-2 --acl private ./deploy-$IMAGE_TAG.zip s3://chalkac-bucket
+          aws s3 cp --region ap-northeast-2 --acl private latest_tag.txt s3://chalkac-bucket/latest_tag.txt
 
       - name: start deploy
         env:
