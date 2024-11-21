@@ -69,7 +69,6 @@ jobs:
           # Run new container
           echo "docker run -p 80:80 -e PROFILE=dev -d --restart always --name chalkac $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> scripts/deploy.sh
 
-
       - name: upload to s3
         env:
           IMAGE_TAG: latest
