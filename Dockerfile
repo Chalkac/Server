@@ -17,8 +17,8 @@ WORKDIR /opt/app
 COPY --from=builder /app/build/libs/*.jar chalkac.jar
 
 ENV PROFILE=local
-EXPOSE 8080
+EXPOSE 80
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s CMD curl -f http://localhost:8080/actuator/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s CMD curl -f http://localhost/actuator/health || exit 1
 
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=${PROFILE}", "chalkac.jar"]
