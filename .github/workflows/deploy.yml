@@ -42,7 +42,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: chalkac
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -54,7 +54,7 @@ jobs:
 
       - name: upload to s3
         env:
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest
         run: |
           echo $IMAGE_TAG > latest_tag.txt
           zip -r deploy-$IMAGE_TAG.zip ./scripts appspec.yml
@@ -63,7 +63,7 @@ jobs:
 
       - name: start deploy
         env:
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest
         run: |
           aws deploy create-deployment --application-name Chalkac-codedeploy \
           --deployment-config-name CodeDeployDefault.OneAtATime \
