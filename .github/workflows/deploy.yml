@@ -46,27 +46,10 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          
-          # Create deploy.sh
           mkdir scripts
           touch scripts/deploy.sh
-          echo "#!/bin/bash" > scripts/deploy.sh
-
-          # Login to ECR
           echo "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin $ECR_REGISTRY" >> scripts/deploy.sh
-          
-          # Check and remove existing container
-          echo "EXISTING_CONTAINER=\$(docker ps -q -f name=chalkac)" >> scripts/deploy.sh
-          echo "if [ -n \"\$EXISTING_CONTAINER\" ]; then" >> scripts/deploy.sh
-          echo "  echo \"Stopping and removing existing container...\"" >> scripts/deploy.sh
-          echo "  docker stop chalkac" >> scripts/deploy.sh
-          echo "  docker rm chalkac" >> scripts/deploy.sh
-          echo "fi" >> scripts/deploy.sh
-
-          # Pull latest image
           echo "docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> scripts/deploy.sh
-
-          # Run new container
           echo "docker run -p 80:80 -e PROFILE=dev -d --restart always --name chalkac $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> scripts/deploy.sh
 
       - name: upload to s3
