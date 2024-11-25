@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/video")
@@ -35,6 +37,11 @@ public class VideoController {
     public ResponseEntity<String> saveVideo(@RequestBody ConvertSaveRequestDto dto) {
         convertService.saveConvertUrl(dto);
         return ResponseEntity.ok("convert url saved.");
+    }
+
+    @PostMapping("/findS3files")
+    public ResponseEntity<List<String>> findS3Files(@RequestBody SelectS3FilesRequestDto dto){
+        return ResponseEntity.ok(videoService.findS3Files(dto.getPath()));
     }
 
     // 1. 모든 영상 정보 조회 (페이징 처리)

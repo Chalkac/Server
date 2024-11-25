@@ -1,5 +1,7 @@
 package com.rtu.chalkac.domain.video.service;
 
+import com.rtu.chalkac.global.properties.AwsProperties;
+import software.amazon.awssdk.services.s3.model.S3Object;
 import com.rtu.chalkac.domain.category.model.Category;
 import com.rtu.chalkac.domain.category.service.CategoryService;
 import com.rtu.chalkac.domain.users.model.Users;
@@ -13,8 +15,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +30,8 @@ public class VideoService {
     private final VideoRepository videoRepository;
     private final CategoryService categoryService;
     private final UserService usersService;
+    private final S3Client s3Client;
+    private final AwsProperties awsProperties;
 
     // getVideo: 단일 조회 예외 처리용
     public Video getVideo(String videoId) {
@@ -123,5 +132,25 @@ public class VideoService {
     // Video ID 생성 (예: UUID 사용)
     private String generateVideoId() {
         return java.util.UUID.randomUUID().toString();
+    }
+
+    public List<String> findS3Files(String path){
+        String bucketName = path.split("/")[2];
+        String prefix = path.substring(path.indexOf(bucketName) + bucketName.length() + 1);
+
+        // Create request
+        ListObjectsV2Request listObjectsRequest = ListObjectsV2Request.builder()
+                .bucket(bucketName)
+                .prefix(prefix)
+                .build();
+
+        // Retrieve objects
+        ListObjectsV2Response response = s3Client.listObjectsV2(listObjectsRequest);
+
+        // Map to full file URLs
+        return response.contents().stream()
+                .map(S3Object::key)
+                .map(key -> String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, awsProperties.getRegion(), key))
+                .collect(Collectors.toList());
     }
 }

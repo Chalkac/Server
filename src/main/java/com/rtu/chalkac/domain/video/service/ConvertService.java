@@ -4,6 +4,8 @@ import com.rtu.chalkac.domain.video.dto.request.ConvertSaveRequestDto;
 import com.rtu.chalkac.domain.video.dto.response.ConvertResponseDto;
 import com.rtu.chalkac.domain.video.model.Video;
 import com.rtu.chalkac.domain.video.repository.VideoRepository;
+import com.rtu.chalkac.global.properties.AwsProperties;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -17,25 +19,32 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ConvertService {
-    // 테스트용 MediaConvertClient 하드코딩
-    private final MediaConvertClient mediaConvertClient = MediaConvertClient.builder()
-            .region(Region.of("ap-northeast-2")) // 하드코딩된 AWS 리전
-            .credentialsProvider(
-                    StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create(
-                                    "AKIAQKPIL3NSNOSK4VJO",        // 테스트용 Access Key ID
-                                    "biK+hR8ZZeZKsINqsn5U4WIUXeN6lNwOYJ80byJm"     // 테스트용 Secret Access Key
-                            )
-                    )
-            )
-            .build();
+
+    private final AwsProperties awsProperties;
     private final VideoService videoService;
     private final VideoRepository videoRepository;
+
+    private MediaConvertClient mediaConvertClient;
+
+    @PostConstruct
+    private void init() {
+        this.mediaConvertClient = MediaConvertClient.builder()
+                .region(Region.of(awsProperties.getRegion()))
+                .credentialsProvider(
+                        StaticCredentialsProvider.create(
+                                AwsBasicCredentials.create(
+                                        awsProperties.getAccessKey(),
+                                        awsProperties.getSecretKey()
+                                )
+                        )
+                )
+                .build();
+    }
 
     public ConvertResponseDto startMediaConvertJob(String inputS3Url, String outputS3Url) {
         try {
             CreateJobRequest createJobRequest = CreateJobRequest.builder()
-                    .role("arn:aws:iam::022499023716:role/chalkac-mediaconvert-role") // IAM Role ARN
+                    .role(awsProperties.getMediaRole()) // IAM Role ARN
                     .settings(createJobSettings(inputS3Url, outputS3Url))
                     .build();
 
@@ -156,5 +165,4 @@ public class ConvertService {
             throw new RuntimeException("Failed to get MediaConvert job details: " + e.getMessage(), e);
         }
     }
-
 }
