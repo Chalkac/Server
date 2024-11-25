@@ -1,6 +1,7 @@
 package com.rtu.chalkac.domain.video.controller;
 
 import com.rtu.chalkac.domain.video.dto.request.*;
+import com.rtu.chalkac.domain.video.dto.response.VideoResponseDto;
 import com.rtu.chalkac.domain.video.model.Video;
 import com.rtu.chalkac.domain.video.service.ConvertService;
 import com.rtu.chalkac.domain.video.service.VideoService;
@@ -25,19 +26,19 @@ public class VideoController {
 
     // 1. 모든 영상 정보 조회 (페이징 처리)
     @GetMapping
-    public ResponseEntity<Page<Video>> getAllVideos(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<Page<VideoResponseDto>> getAllVideos(@RequestParam int page, @RequestParam int size) {
         return ResponseEntity.ok(videoService.findAllVideos(page, size));
     }
 
     // 2. 영상 단일 조회
     @GetMapping("/{id}")
-    public ResponseEntity<Video> getVideoById(@PathVariable String id) {
+    public ResponseEntity<VideoResponseDto> getVideoById(@PathVariable String id) {
         return ResponseEntity.ok(videoService.findVideoById(id));
     }
 
     // 3. 업로드 API
     @PostMapping
-    public ResponseEntity<Video> createVideo(@RequestBody CreateVideoRequestDto requestDto) {
+    public ResponseEntity<VideoResponseDto> createVideo(@RequestBody CreateVideoRequestDto requestDto) {
         return ResponseEntity.ok(videoService.createVideo(requestDto));
     }
 

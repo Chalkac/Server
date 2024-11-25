@@ -5,6 +5,7 @@ import com.rtu.chalkac.domain.category.service.CategoryService;
 import com.rtu.chalkac.domain.users.model.Users;
 import com.rtu.chalkac.domain.users.service.UserService;
 import com.rtu.chalkac.domain.video.dto.request.*;
+import com.rtu.chalkac.domain.video.dto.response.VideoResponseDto;
 import com.rtu.chalkac.domain.video.model.Video;
 import com.rtu.chalkac.domain.video.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,18 +31,18 @@ public class VideoService {
     }
 
     // 1. 모든 영상 정보 조회 (페이징 처리)
-    public Page<Video> findAllVideos(int page, int size) {
-        return videoRepository.findAll(PageRequest.of(page, size));
+    public Page<VideoResponseDto> findAllVideos(int page, int size) {
+        return videoRepository.findAll(PageRequest.of(page, size)).map(VideoResponseDto::new);
     }
 
     // 2. 영상 단일 조회
-    public Video findVideoById(String videoId) {
-        return getVideo(videoId);
+    public VideoResponseDto findVideoById(String videoId) {
+        return new VideoResponseDto(getVideo(videoId));
     }
 
     // 3. 업로드 API (create)
     @Transactional
-    public Video createVideo(CreateVideoRequestDto requestDto) {
+    public VideoResponseDto createVideo(CreateVideoRequestDto requestDto) {
         Category category = categoryService.getCategory(Long.parseLong(requestDto.getCategoryId()));
         Users user = usersService.getUser(requestDto.getUserId());
 
@@ -60,7 +61,7 @@ public class VideoService {
                 .date(LocalDateTime.now())
                 .build();
 
-        return videoRepository.save(video);
+        return new VideoResponseDto(videoRepository.save(video));
     }
 
     // 4. 카테고리 수정
