@@ -20,35 +20,35 @@ public class Video {
     private String videoId;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    @Column(name = "original_url")
+    @Column(name = "original_url", nullable = false)
     private String originalUrl;
 
-    @Column(name = "convert_url")
+    @Column(name = "convert_url", nullable = false)
     private String convertUrl;
 
-    @Column(name = "thumbnail_url")
+    @Column(name = "thumbnail_url", nullable = false)
     private String thumbnailUrl;
 
-    @Column(name = "like_cnt")
+    @Column(name = "like_cnt", nullable = false)
     private long likeCnt;
 
-    @Column(name = "dislike_cnt")
+    @Column(name = "dislike_cnt", nullable = false)
     private long dislikeCnt;
 
-    @Column(name = "view_cnt")
+    @Column(name = "view_cnt", nullable = false)
     private long viewCnt;
 
-    @Column(name = "date")
+    @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "title")
