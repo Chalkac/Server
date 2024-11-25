@@ -1,15 +1,18 @@
 package com.rtu.chalkac.domain.video.controller;
 
 import com.rtu.chalkac.domain.video.dto.request.*;
+import com.rtu.chalkac.domain.video.dto.response.ConvertResponseDto;
 import com.rtu.chalkac.domain.video.dto.response.VideoResponseDto;
 import com.rtu.chalkac.domain.video.model.Video;
 import com.rtu.chalkac.domain.video.service.ConvertService;
 import com.rtu.chalkac.domain.video.service.VideoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/video")
 @RequiredArgsConstructor
@@ -19,9 +22,19 @@ public class VideoController {
     private final ConvertService convertService;
 
     @PostMapping("/convert")
-    public ResponseEntity<String> convertVideo(@RequestBody ConvertRequestDto dto) {
-        String jobId = convertService.startMediaConvertJob(dto.getInputS3Url(), dto.getOutputS3Url());
-        return ResponseEntity.ok("MediaConvert Job Started with ID: " + jobId);
+    public ResponseEntity<ConvertResponseDto> convertVideo(@RequestBody ConvertRequestDto dto) {
+        return ResponseEntity.ok(convertService.startMediaConvertJob(dto.getInputS3Url(), dto.getOutputS3Url()));
+    }
+
+    @PostMapping("/status")
+    public ResponseEntity<String> getStatus(@RequestBody ConvertStatusRequestDto dto) {
+        return ResponseEntity.ok(convertService.getConvertStatus(dto.getJobId()));
+    }
+
+    @PutMapping("/convertsave")
+    public ResponseEntity<String> saveVideo(@RequestBody ConvertSaveRequestDto dto) {
+        convertService.saveConvertUrl(dto);
+        return ResponseEntity.ok("convert url saved.");
     }
 
     // 1. 모든 영상 정보 조회 (페이징 처리)
