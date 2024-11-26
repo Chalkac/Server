@@ -39,4 +39,20 @@ public class SwaggerConfig {
                 .pathsToMatch("/api/v1/video/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi CommentGroup(){
+        return GroupedOpenApi.builder()
+                .group("Comment")
+                .pathsToMatch("/api/v1/comment/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi ReplyGroup(){
+        return GroupedOpenApi.builder()
+                .group("Reply")
+                .pathsToMatch("/api/v1/reply/**")
+                .build();
+    }
 }
