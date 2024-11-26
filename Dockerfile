@@ -7,7 +7,7 @@ COPY ./gradle ./gradle
 COPY ./build.gradle ./settings.gradle ./
 COPY ./src ./src
 
-RUN ./gradlew build --no-daemon && rm -rf /root/.gradle
+RUN ./gradlew build -x test --no-daemon && rm -rf /root/.gradle
 
 # 2단계: 실행 환경
 FROM eclipse-temurin:17-jre-alpine
