@@ -36,6 +36,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://localhost:3000/");
         config.addAllowedOrigin("https://chalkacserver.site");
+        config.addAllowedOrigin("http://chalkacserver.site");
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
 
