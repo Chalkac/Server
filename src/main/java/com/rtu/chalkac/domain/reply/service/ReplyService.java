@@ -8,8 +8,8 @@ import com.rtu.chalkac.domain.reply.model.Reply;
 import com.rtu.chalkac.domain.reply.repository.ReplyRepository;
 import com.rtu.chalkac.domain.users.model.Users;
 import com.rtu.chalkac.domain.users.service.UserService;
+import com.rtu.chalkac.global.util.PageableDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,10 +31,10 @@ public class ReplyService {
     }
 
     // 해당 댓글의 답글 조회, Page, ReplyResponseDto 사용, date 최신순
-    public Page<ReplyResponseDto> findRepliesByComment(String commentId, int page, int size) {
+    public PageableDto<ReplyResponseDto> findRepliesByComment(String commentId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return replyRepository.findByCommentCommentIdOrderByDateAsc(commentId, pageable)
-                .map(ReplyResponseDto::new);
+        return new PageableDto<>(replyRepository.findByCommentCommentIdOrderByDateAsc(commentId, pageable)
+                .map(ReplyResponseDto::new));
     }
 
     // 답글 하나 조회, ReplyResponseDto 사용

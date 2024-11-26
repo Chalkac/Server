@@ -9,8 +9,8 @@ import com.rtu.chalkac.domain.users.model.Users;
 import com.rtu.chalkac.domain.users.service.UserService;
 import com.rtu.chalkac.domain.video.model.Video;
 import com.rtu.chalkac.domain.video.service.VideoService;
+import com.rtu.chalkac.global.util.PageableDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,15 +30,15 @@ public class CommentService {
     }
 
     // 해당 비디오의 댓글 조회, Page, CommentResponseDto 사용, likeCnt 높은순
-    public Page<CommentResponseDto> findCommentsByLikes(String videoId, Pageable pageable) {
-        return commentRepository.findByVideoIdOrderByLikeDislikeSumDesc(videoId, pageable)
-                .map(CommentResponseDto::new);
+    public PageableDto<CommentResponseDto> findCommentsByLikes(String videoId, Pageable pageable) {
+        return new PageableDto<>(commentRepository.findByVideoIdOrderByLikeDislikeSumDesc(videoId, pageable)
+                .map(CommentResponseDto::new));
     }
 
     // 해당 비디오의 댓글 조회, Page, CommentResponseDto 사용, date 최신순
-    public Page<CommentResponseDto> findCommentsByDate(String videoId, Pageable pageable) {
-        return commentRepository.findByVideoVideoIdOrderByDateDesc(videoId, pageable)
-                .map(CommentResponseDto::new);
+    public PageableDto<CommentResponseDto> findCommentsByDate(String videoId, Pageable pageable) {
+        return new PageableDto<>(commentRepository.findByVideoVideoIdOrderByDateDesc(videoId, pageable)
+                .map(CommentResponseDto::new));
     }
 
     // id로 댓글 하나 조회, CommentResponseDto 사용

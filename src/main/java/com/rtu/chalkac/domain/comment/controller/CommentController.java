@@ -4,8 +4,8 @@ import com.rtu.chalkac.domain.comment.dto.request.CreateCommentRequestDto;
 import com.rtu.chalkac.domain.comment.dto.request.UpdateCommentRequestDto;
 import com.rtu.chalkac.domain.comment.dto.response.CommentResponseDto;
 import com.rtu.chalkac.domain.comment.service.CommentService;
+import com.rtu.chalkac.global.util.PageableDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,25 +19,25 @@ public class CommentController {
 
     // 해당 비디오의 댓글 조회 - likeCnt 높은 순
     @GetMapping("/{videoId}/by-likes")
-    public ResponseEntity<Page<CommentResponseDto>> getCommentsByLikes(
+    public ResponseEntity<PageableDto<CommentResponseDto>> getCommentsByLikes(
             @PathVariable String videoId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size); // 페이지 정보 생성
-        Page<CommentResponseDto> comments = commentService.findCommentsByLikes(videoId, pageable);
+        PageableDto<CommentResponseDto> comments = commentService.findCommentsByLikes(videoId, pageable);
         return ResponseEntity.ok(comments);
     }
 
     // 해당 비디오의 댓글 조회 - date 최신 순
     @GetMapping("/{videoId}/by-date")
-    public ResponseEntity<Page<CommentResponseDto>> getCommentsByDate(
+    public ResponseEntity<PageableDto<CommentResponseDto>> getCommentsByDate(
             @PathVariable String videoId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size); // 페이지 정보 생성
-        Page<CommentResponseDto> comments = commentService.findCommentsByDate(videoId, pageable);
+        PageableDto<CommentResponseDto> comments = commentService.findCommentsByDate(videoId, pageable);
         return ResponseEntity.ok(comments);
     }
 

@@ -3,8 +3,8 @@ package com.rtu.chalkac.domain.reply.controller;
 import com.rtu.chalkac.domain.reply.dto.request.CreateCommentRequestDto;
 import com.rtu.chalkac.domain.reply.dto.response.ReplyResponseDto;
 import com.rtu.chalkac.domain.reply.service.ReplyService;
+import com.rtu.chalkac.global.util.PageableDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +16,11 @@ public class ReplyController {
 
     // 해당 댓글의 답글 조회 - 최신순
     @GetMapping("/{commentId}/by-date")
-    public ResponseEntity<Page<ReplyResponseDto>> findRepliesByComment(
+    public ResponseEntity<PageableDto<ReplyResponseDto>> findRepliesByComment(
             @PathVariable String commentId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<ReplyResponseDto> replies = replyService.findRepliesByComment(commentId, page, size);
+        PageableDto<ReplyResponseDto> replies = replyService.findRepliesByComment(commentId, page, size);
         return ResponseEntity.ok(replies);
     }
 
