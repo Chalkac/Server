@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -32,7 +31,7 @@ public class CommentService {
 
     // 해당 비디오의 댓글 조회, Page, CommentResponseDto 사용, likeCnt 높은순
     public Page<CommentResponseDto> findCommentsByLikes(String videoId, Pageable pageable) {
-        return commentRepository.findByVideoVideoIdOrderByLikeCntDesc(videoId, pageable)
+        return commentRepository.findByVideoIdOrderByLikeDislikeSumDesc(videoId, pageable)
                 .map(CommentResponseDto::new);
     }
 
@@ -94,6 +93,9 @@ public class CommentService {
         if (increment) {
             comment.setLikeCnt(comment.getLikeCnt() + 1);
         } else {
+            if(comment.getLikeCnt() == 0){
+                throw new IllegalArgumentException("Like cnt are both 0");
+            }
             comment.setLikeCnt(Math.max(0, comment.getLikeCnt() - 1)); // 최소값 0
         }
 
@@ -108,6 +110,9 @@ public class CommentService {
         if (increment) {
             comment.setDislikeCnt(comment.getDislikeCnt() + 1);
         } else {
+            if(comment.getDislikeCnt() == 0){
+                throw new IllegalArgumentException("Dislike cnt are both 0");
+            }
             comment.setDislikeCnt(Math.max(0, comment.getDislikeCnt() - 1)); // 최소값 0
         }
 

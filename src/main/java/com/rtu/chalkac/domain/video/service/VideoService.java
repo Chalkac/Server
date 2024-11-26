@@ -106,6 +106,11 @@ public class VideoService {
     @Transactional
     public void updateVideoLikes(String videoId, boolean isLike, boolean isIncrement) {
         Video video = getVideo(videoId);
+        if(!isIncrement){
+            if(video.getLikeCnt() == 0 || video.getDislikeCnt() == 0){
+                throw new IllegalArgumentException("Like cnt and Dislike cnt are both 0");
+            }
+        }
         if (isLike) {
             video.setLikeCnt(video.getLikeCnt() + (isIncrement ? 1 : -1));
         } else {

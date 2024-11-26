@@ -33,7 +33,7 @@ public class ReplyService {
     // 해당 댓글의 답글 조회, Page, ReplyResponseDto 사용, date 최신순
     public Page<ReplyResponseDto> findRepliesByComment(String commentId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return replyRepository.findByCommentCommentIdOrderByDateDesc(commentId, pageable)
+        return replyRepository.findByCommentCommentIdOrderByDateAsc(commentId, pageable)
                 .map(ReplyResponseDto::new);
     }
 
@@ -87,6 +87,9 @@ public class ReplyService {
         if (increment) {
             reply.setLikeCnt(reply.getLikeCnt() + 1);
         } else {
+            if(reply.getLikeCnt() == 0){
+                throw new IllegalArgumentException("Like cnt are both 0");
+            }
             reply.setLikeCnt(Math.max(0, reply.getLikeCnt() - 1)); // 최소값 0
         }
 
@@ -101,6 +104,9 @@ public class ReplyService {
         if (increment) {
             reply.setDislikeCnt(reply.getDislikeCnt() + 1);
         } else {
+            if(reply.getDislikeCnt() == 0){
+                throw new IllegalArgumentException("Dislike cnt are both 0");
+            }
             reply.setDislikeCnt(Math.max(0, reply.getDislikeCnt() - 1)); // 최소값 0
         }
 

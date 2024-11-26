@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReplyRepository extends JpaRepository<Reply, String> {
-    Page<Reply> findByCommentCommentIdOrderByDateDesc(String commentId, Pageable pageable);
+    Page<Reply> findByCommentCommentIdOrderByDateAsc(String commentId, Pageable pageable);
 }
