@@ -3,9 +3,10 @@ package com.rtu.chalkac.domain.video.controller;
 import com.rtu.chalkac.domain.video.dto.request.*;
 import com.rtu.chalkac.domain.video.dto.response.ConvertResponseDto;
 import com.rtu.chalkac.domain.video.dto.response.VideoResponseDto;
-import com.rtu.chalkac.domain.video.model.Video;
 import com.rtu.chalkac.domain.video.service.ConvertService;
+import com.rtu.chalkac.domain.video.service.SearchService;
 import com.rtu.chalkac.domain.video.service.VideoService;
+import com.rtu.chalkac.global.util.PageableDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,20 @@ public class VideoController {
 
     private final VideoService videoService;
     private final ConvertService convertService;
+    private final SearchService searchService;
+
+    @GetMapping("/search")
+    public ResponseEntity<PageableDto<VideoResponseDto>> searchVideos(
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // 검색 서비스 호출
+        PageableDto<VideoResponseDto> searchResults = searchService.searchVideos(keyword, page, size);
+
+        // 결과 반환
+        return ResponseEntity.ok(searchResults);
+    }
 
     @PostMapping("/convert")
     public ResponseEntity<ConvertResponseDto> convertVideo(@RequestBody ConvertRequestDto dto) {
@@ -46,7 +61,7 @@ public class VideoController {
 
     // 1. 모든 영상 정보 조회 (페이징 처리)
     @GetMapping
-    public ResponseEntity<Page<VideoResponseDto>> getAllVideos(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<PageableDto<VideoResponseDto>> getAllVideos(@RequestParam int page, @RequestParam int size) {
         return ResponseEntity.ok(videoService.findAllVideos(page, size));
     }
 

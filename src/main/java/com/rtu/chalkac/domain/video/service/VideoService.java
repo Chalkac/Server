@@ -1,6 +1,7 @@
 package com.rtu.chalkac.domain.video.service;
 
 import com.rtu.chalkac.global.properties.AwsProperties;
+import com.rtu.chalkac.global.util.PageableDto;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import com.rtu.chalkac.domain.category.model.Category;
 import com.rtu.chalkac.domain.category.service.CategoryService;
@@ -40,8 +41,8 @@ public class VideoService {
     }
 
     // 1. 모든 영상 정보 조회 (페이징 처리)
-    public Page<VideoResponseDto> findAllVideos(int page, int size) {
-        return videoRepository.findAll(PageRequest.of(page, size)).map(VideoResponseDto::new);
+    public PageableDto<VideoResponseDto> findAllVideos(int page, int size) {
+        return new PageableDto<>(videoRepository.findAll(PageRequest.of(page, size)).map(VideoResponseDto::new));
     }
 
     // 2. 영상 단일 조회
@@ -106,6 +107,11 @@ public class VideoService {
     @Transactional
     public void updateVideoLikes(String videoId, boolean isLike, boolean isIncrement) {
         Video video = getVideo(videoId);
+        if(!isIncrement){
+            if(video.getLikeCnt() == 0 || video.getDislikeCnt() == 0){
+                throw new IllegalArgumentException("Like cnt and Dislike cnt are both 0");
+            }
+        }
         if (isLike) {
             video.setLikeCnt(video.getLikeCnt() + (isIncrement ? 1 : -1));
         } else {
