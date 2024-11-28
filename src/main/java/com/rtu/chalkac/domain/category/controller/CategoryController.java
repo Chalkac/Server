@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/category")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('USER')")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -33,6 +33,7 @@ public class CategoryController {
     }
 
     // 3. 생성
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CreateCategoryRequestDto requestDto) {
         CategoryResponseDto createdCategory = categoryService.createCategory(requestDto);
@@ -40,6 +41,7 @@ public class CategoryController {
     }
 
     // 4. 삭제
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategoryById(@PathVariable Long id) {
         categoryService.deleteCategoryById(id);
