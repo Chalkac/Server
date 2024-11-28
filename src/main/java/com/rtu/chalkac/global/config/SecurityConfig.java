@@ -1,5 +1,6 @@
 package com.rtu.chalkac.global.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,12 +19,12 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
-import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
 import java.util.stream.Collectors;
 
+@Slf4j
 @Configuration
 public class SecurityConfig {
 
@@ -39,13 +40,15 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/v1/category/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/category/**").hasRole("USER")
                         .requestMatchers("/api/v1/comment/**").hasRole("USER")
                         .requestMatchers("/api/v1/reply/**").hasRole("USER")
                         .requestMatchers("/api/v1/video/**").hasRole("USER")
 						.anyRequest().permitAll()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(request -> authenticationManager())); // JWT 인증 활성화
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                ); // JWT 인증 활성화
         return httpSecurity.build();
     }
 
@@ -70,9 +73,12 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        converter.setJwtGrantedAuthoritiesConverter(jwt -> jwt.getClaimAsStringList("roles").stream()
-                .map(role -> (GrantedAuthority) () -> "ROLE_" + role.toUpperCase())
-                .collect(Collectors.toList()));
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            // "cognito:groups" 클레임을 읽어서 Spring Security 권한으로 변환
+            return jwt.getClaimAsStringList("cognito:groups").stream()
+                    .map(group -> (GrantedAuthority) group::toUpperCase)
+                    .collect(Collectors.toList());
+        });
         return converter;
     }
 

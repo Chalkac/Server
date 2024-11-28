@@ -9,7 +9,6 @@ import com.rtu.chalkac.domain.video.service.VideoService;
 import com.rtu.chalkac.global.util.PageableDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
