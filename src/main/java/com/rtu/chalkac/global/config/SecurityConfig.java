@@ -40,10 +40,10 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/v1/category/**").hasRole("USER")
-                        .requestMatchers("/api/v1/comment/**").hasRole("USER")
-                        .requestMatchers("/api/v1/reply/**").hasRole("USER")
-                        .requestMatchers("/api/v1/video/**").hasRole("USER")
+                        .requestMatchers("/api/v1/category/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/v1/comment/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/v1/reply/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/v1/video/**").hasAnyRole("USER", "ADMIN")
 						.anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
