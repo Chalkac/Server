@@ -45,6 +45,11 @@ public class VideoService {
         return new PageableDto<>(videoRepository.findAll(PageRequest.of(page, size)).map(VideoResponseDto::new));
     }
 
+    // 1. 유저의 영상 조회
+    public PageableDto<VideoResponseDto> findVideosByUserId(int page, int size, String userId){
+        return new PageableDto<>(videoRepository.findByUser(PageRequest.of(page, size), usersService.getUser(userId)).map(VideoResponseDto::new));
+    }
+
     // 2. 영상 단일 조회
     public VideoResponseDto findVideoById(String videoId) {
         return new VideoResponseDto(getVideo(videoId));

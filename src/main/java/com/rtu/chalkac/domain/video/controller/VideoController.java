@@ -39,6 +39,14 @@ public class VideoController {
         return ResponseEntity.ok(searchResults);
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<PageableDto<VideoResponseDto>> getVideosByUser(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam String userId){
+        return ResponseEntity.ok(videoService.findVideosByUserId(page, size, userId));
+    }
+
     @PostMapping("/convert")
     public ResponseEntity<ConvertResponseDto> convertVideo(@RequestBody ConvertRequestDto dto) {
         return ResponseEntity.ok(convertService.startMediaConvertJob(dto.getInputS3Url(), dto.getOutputS3Url()));
