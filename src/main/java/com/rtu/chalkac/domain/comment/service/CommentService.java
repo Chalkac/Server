@@ -31,13 +31,13 @@ public class CommentService {
 
     // 해당 비디오의 댓글 조회, Page, CommentResponseDto 사용, likeCnt 높은순
     public PageableDto<CommentResponseDto> findCommentsByLikes(String videoId, Pageable pageable) {
-        return new PageableDto<>(commentRepository.findByVideoIdOrderByLikeDislikeSumDesc(videoId, pageable)
+        return new PageableDto<>(commentRepository.findByVideoIdOrderByLikeDislikeSumAsc(videoId, pageable)
                 .map(CommentResponseDto::new));
     }
 
     // 해당 비디오의 댓글 조회, Page, CommentResponseDto 사용, date 최신순
     public PageableDto<CommentResponseDto> findCommentsByDate(String videoId, Pageable pageable) {
-        return new PageableDto<>(commentRepository.findByVideoVideoIdOrderByDateDesc(videoId, pageable)
+        return new PageableDto<>(commentRepository.findByVideoVideoIdOrderByDateAsc(videoId, pageable)
                 .map(CommentResponseDto::new));
     }
 

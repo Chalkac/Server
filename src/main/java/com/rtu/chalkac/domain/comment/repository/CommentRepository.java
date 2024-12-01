@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface CommentRepository extends JpaRepository<Comment, String> {
-    @Query("SELECT c FROM Comment c WHERE c.video.videoId = :videoId ORDER BY (c.likeCnt - c.dislikeCnt) DESC")
-    Page<Comment> findByVideoIdOrderByLikeDislikeSumDesc(@Param("videoId") String videoId, Pageable pageable);
+    @Query("SELECT c FROM Comment c WHERE c.video.videoId = :videoId ORDER BY (c.likeCnt - c.dislikeCnt) ASC")
+    Page<Comment> findByVideoIdOrderByLikeDislikeSumAsc(@Param("videoId") String videoId, Pageable pageable);
 
-    Page<Comment> findByVideoVideoIdOrderByDateDesc(String videoId, Pageable pageable);
+    Page<Comment> findByVideoVideoIdOrderByDateAsc(String videoId, Pageable pageable);
 }
