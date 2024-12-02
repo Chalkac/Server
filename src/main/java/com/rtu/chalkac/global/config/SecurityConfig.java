@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/comment/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/v1/reply/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/v1/video/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "ADMIN")
 						.anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -88,6 +89,8 @@ public class SecurityConfig {
         config.addAllowedOrigin("http://localhost:3000/");
         config.addAllowedOrigin("https://chalkacserver.site");
         config.addAllowedOrigin("http://chalkacserver.site");
+        config.addAllowedOrigin("https://chalkac.site");
+        config.addAllowedOrigin("http://chalkac.site");
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
 
