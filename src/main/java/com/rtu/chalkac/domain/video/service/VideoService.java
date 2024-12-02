@@ -12,7 +12,6 @@ import com.rtu.chalkac.domain.video.dto.response.VideoResponseDto;
 import com.rtu.chalkac.domain.video.model.Video;
 import com.rtu.chalkac.domain.video.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
