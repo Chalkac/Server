@@ -60,6 +60,10 @@ public class VideoService {
         Category category = categoryService.getCategory(Long.parseLong(requestDto.getCategoryId()));
         Users user = usersService.getUser(requestDto.getUserId());
 
+        if(videoRepository.existsByTitle(requestDto.getTitle())) {
+            throw new IllegalArgumentException("Title already exists");
+        }
+
         Video video = Video.builder()
                 .videoId(generateVideoId()) // 별도의 ID 생성 로직 필요
                 .category(category)
