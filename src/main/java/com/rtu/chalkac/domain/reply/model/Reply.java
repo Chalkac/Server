@@ -27,7 +27,7 @@ public class Reply {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", nullable = false, length = 1000)
     private String content;
 
     @Column(name = "like_cnt", nullable = false)

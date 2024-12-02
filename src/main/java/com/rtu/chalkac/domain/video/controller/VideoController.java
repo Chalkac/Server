@@ -9,8 +9,8 @@ import com.rtu.chalkac.domain.video.service.VideoService;
 import com.rtu.chalkac.global.util.PageableDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/video")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class VideoController {
 
     private final VideoService videoService;
@@ -36,6 +37,14 @@ public class VideoController {
 
         // 결과 반환
         return ResponseEntity.ok(searchResults);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<PageableDto<VideoResponseDto>> getVideosByUser(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam String userId){
+        return ResponseEntity.ok(videoService.findVideosByUserId(page, size, userId));
     }
 
     @PostMapping("/convert")

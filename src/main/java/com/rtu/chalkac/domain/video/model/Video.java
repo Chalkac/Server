@@ -48,7 +48,7 @@ public class Video {
     @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 4000)
     private String description;
 
     @Column(name = "title")

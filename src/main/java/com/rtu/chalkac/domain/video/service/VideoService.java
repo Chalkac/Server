@@ -12,7 +12,6 @@ import com.rtu.chalkac.domain.video.dto.response.VideoResponseDto;
 import com.rtu.chalkac.domain.video.model.Video;
 import com.rtu.chalkac.domain.video.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +42,11 @@ public class VideoService {
     // 1. 모든 영상 정보 조회 (페이징 처리)
     public PageableDto<VideoResponseDto> findAllVideos(int page, int size) {
         return new PageableDto<>(videoRepository.findAll(PageRequest.of(page, size)).map(VideoResponseDto::new));
+    }
+
+    // 1. 유저의 영상 조회
+    public PageableDto<VideoResponseDto> findVideosByUserId(int page, int size, String userId){
+        return new PageableDto<>(videoRepository.findByUser(PageRequest.of(page, size), usersService.getUser(userId)).map(VideoResponseDto::new));
     }
 
     // 2. 영상 단일 조회
