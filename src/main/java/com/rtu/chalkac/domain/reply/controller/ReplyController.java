@@ -6,11 +6,13 @@ import com.rtu.chalkac.domain.reply.service.ReplyService;
 import com.rtu.chalkac.global.util.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/reply")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class ReplyController {
     private final ReplyService replyService;
 

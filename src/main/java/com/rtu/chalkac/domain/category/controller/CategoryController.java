@@ -5,6 +5,7 @@ import com.rtu.chalkac.domain.category.dto.CreateCategoryRequestDto;
 import com.rtu.chalkac.domain.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/category")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -31,6 +33,7 @@ public class CategoryController {
     }
 
     // 3. 생성
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CreateCategoryRequestDto requestDto) {
         CategoryResponseDto createdCategory = categoryService.createCategory(requestDto);
@@ -38,6 +41,7 @@ public class CategoryController {
     }
 
     // 4. 삭제
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategoryById(@PathVariable Long id) {
         categoryService.deleteCategoryById(id);

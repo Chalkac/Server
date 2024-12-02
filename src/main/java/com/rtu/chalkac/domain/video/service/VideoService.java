@@ -12,7 +12,6 @@ import com.rtu.chalkac.domain.video.dto.response.VideoResponseDto;
 import com.rtu.chalkac.domain.video.model.Video;
 import com.rtu.chalkac.domain.video.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +44,11 @@ public class VideoService {
         return new PageableDto<>(videoRepository.findAll(PageRequest.of(page, size)).map(VideoResponseDto::new));
     }
 
+    // 1. 유저의 영상 조회
+    public PageableDto<VideoResponseDto> findVideosByUserId(int page, int size, String userId){
+        return new PageableDto<>(videoRepository.findByUser(PageRequest.of(page, size), usersService.getUser(userId)).map(VideoResponseDto::new));
+    }
+
     // 2. 영상 단일 조회
     public VideoResponseDto findVideoById(String videoId) {
         return new VideoResponseDto(getVideo(videoId));
@@ -55,6 +59,10 @@ public class VideoService {
     public VideoResponseDto createVideo(CreateVideoRequestDto requestDto) {
         Category category = categoryService.getCategory(Long.parseLong(requestDto.getCategoryId()));
         Users user = usersService.getUser(requestDto.getUserId());
+
+        if(videoRepository.existsByTitle(requestDto.getTitle())) {
+            throw new IllegalArgumentException("Title already exists");
+        }
 
         Video video = Video.builder()
                 .videoId(generateVideoId()) // 별도의 ID 생성 로직 필요
