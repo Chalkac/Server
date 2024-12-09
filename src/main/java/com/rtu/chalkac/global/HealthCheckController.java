@@ -9,6 +9,6 @@ public class HealthCheckController {
 
     @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok().body("chalkac-version-1.1");
+        return ResponseEntity.ok().body("chalkac-version-1.2");
     }
 }
