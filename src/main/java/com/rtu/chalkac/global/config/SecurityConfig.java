@@ -1,6 +1,7 @@
 package com.rtu.chalkac.global.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +28,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Configuration
 public class SecurityConfig {
+
+    @Value("${auth.jwt.issuer}")
+    private String issuer;
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
@@ -65,7 +69,6 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        String issuer = "https://cognito-idp.ap-northeast-2.amazonaws.com/ap-northeast-2_AbvZMxTi4";
         NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuer);
         jwtDecoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(issuer));
         return jwtDecoder;
